@@ -38,8 +38,22 @@ python3 src/01-download.py
 idempotent — already-downloaded files are skipped, not re-fetched.
 
 **Not yet handled here** (see `docs/M1_Implementation_Plan.md` for the fuller
-design): sha256 verification, GCS upload, `raw_files` manifest tracking,
-resumability beyond "file already exists on disk".
+design): GCS upload, `raw_files` manifest tracking, resumability beyond "file
+already exists on disk".
+
+## Verifying raw files
+
+`datasets/raw.sha256` records the SHA256 of each downloaded file. It is in the
+standard `shasum` format, so no custom tooling is needed:
+
+```sh
+make verify   # recompute and compare against the manifest
+make hash     # regenerate the manifest from the files on disk
+```
+
+`verify` only checks files listed in the manifest; it will not flag new or
+extra files. Run it from the project root with the venv active, and note it
+hashes the full ~2.4GB set.
 
 ## 02 — Storage
 
