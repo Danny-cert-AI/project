@@ -1,10 +1,10 @@
-# Assignment pipeline
+# Data Handling and Infrastructure — Dublin Bikes Pipeline
 
-Running notes on what each numbered script in `src/` does and how to run it,
-mapped to the M1 deliverables in `docs/01 Assignments.pdf` and
-`docs/M1_Implementation_Plan.md`. One section per script, added as each is built.
+Assignment project for the SETU "Data Handling and Infrastructure" module.
+The goal is to take the Dublin Bikes historical dataset end-to-end — raw
+data, through a data pipeline, to a ML model — across four milestones, each building on the one before.
 
-## Setup (venv)
+## Setup
 
 Run once, from the project root:
 ```sh
@@ -13,75 +13,33 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Activate the venv (`source .venv/bin/activate`) before running any script
-below. Deactivate with `deactivate` when done. `.venv/` is gitignored.
+Activate the venv (`source .venv/bin/activate`) before running any script.
+Deactivate with `deactivate` when done. `.venv/` is gitignored.
 
-## 01 — Download (`src/01-download.py`)
+## Project layout
 
-**Purpose**: pull the historical Dublin Bikes station CSVs from data.gov.ie.
+- `src/` — numbered pipeline scripts, run in order from the project root (letters split a step into sub-steps):
+  - [`src/01-a-download.py`](src/01-a-download.py) — download the raw CSVs from data.gov.ie
+  - [`src/01-b-verify.py`](src/01-b-verify.py) — check the SHA256 of each raw file
+  - [`src/02-a-upload.py`](src/02-a-upload.py) — upload the raw CSVs to Cloud Storage
+  - [`src/02-b-load-bigquery.py`](src/02-b-load-bigquery.py) — load the station status CSVs into BigQuery
+  - [`src/02-c-profile.py`](src/02-c-profile.py) — data quality checks on the raw BigQuery table
+  - [`src/03-filter.py`](src/03-filter.py) — remove invalid rows into a clean BigQuery table
+  - [`src/04-features.py`](src/04-features.py) — build the feature table (targets, rolling, calendar, station)
+  - [`src/05-splits.py`](src/05-splits.py) — split the feature table by date into train, validate and test
+  - [`src/06-shard.py`](src/06-shard.py) — plan one shard per split per month
+  - [`src/07-store.py`](src/07-store.py) — export each shard as Parquet to Cloud Storage and check it reads back
+  - [`src/logs.py`](src/logs.py) — shared logging helper, imported by the scripts above
+- `datasets/` — downloaded and processed data (gitignored)
+- `images/` — screenshots referenced markdown files.
+- `logs/` — operator and failure logs written by the scripts (gitignored)
 
-**What it does**:
-- Queries the CKAN catalogue: `package_show?id=dublinbikes-api`.
-- Filters the resource list to files matching `dublinbike-historical-data-*` and
-  `dublin-bikes_station_status_*`.
-- Streams each matching file to `datasets/raw/` (relative to the project root),
-  skipping any file already downloaded.
+## Milestone write-ups
 
-**Run**:
-```sh
-python3 src/01-download.py
-```
+One per milestone, documenting what each pipeline stage does and how to run it:
 
-**Requirements**: `requests` (see `requirements.txt`).
+- [MILESTONE1.md](MILESTONE1.md) — Data source, task, splits, and storage
+- MILESTONE2.md — Data analysis and data pipeline *(not yet written)*
+- MILESTONE3.md — ML pipeline, MLOps, and first models *(not yet written)*
+- MILESTONE4.md — Scalable inference and continued deployment *(not yet written)*
 
-**Output**: raw CSVs land in `datasets/raw/` (gitignored). Re-running is
-idempotent — already-downloaded files are skipped, not re-fetched.
-
-**Not yet handled here** (see `docs/M1_Implementation_Plan.md` for the fuller
-design): GCS upload, `raw_files` manifest tracking, resumability beyond "file
-already exists on disk".
-
-## Verifying raw files
-
-`datasets/raw.sha256` records the SHA256 of each downloaded file. It is in the
-standard `shasum` format, so no custom tooling is needed:
-
-```sh
-make verify   # recompute and compare against the manifest
-make hash     # regenerate the manifest from the files on disk
-```
-
-`verify` only checks files listed in the manifest; it will not flag new or
-extra files. Run it from the project root with the venv active, and note it
-hashes the full ~2.4GB set.
-
-## 02 — Storage
-
-*Not yet implemented.* Upload raw files to GCS (`setu-dhi-03-dublinbikes-raw`
-bucket) and record the `raw_files` manifest in MariaDB.
-
-## 03 — Filtering
-
-*Not yet implemented.* Drop rows with invalid values
-(`num_bikes_available`/`num_docks_available` negative or inconsistent with
-`capacity`) at load time.
-
-## 04 — Feature extraction
-
-*Not yet implemented.* Lag/rolling/calendar/station features and targets,
-written to monthly Parquet shards (`build_features.py`).
-
-## 05 — Train/dev/test splits
-
-*Not yet implemented.* Chronological split boundaries and walk-forward CV
-folds (`make_splits.py`).
-
-## 06 — Sharding
-
-*Not yet implemented.* Monthly station-partitioned Parquet output
-(`data/features/dt=YYYY-MM/part.parquet`).
-
-## 07 — Store preprocessed data
-
-*Not yet implemented.* The feature Parquet shards from 06 are the
-preprocessed/training-ready store.
