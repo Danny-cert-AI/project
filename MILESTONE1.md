@@ -377,3 +377,4 @@ One shard in the console
 
 ![A Parquet shard in the bucket](images/07-bucket-parquet-shard.png)
 
+Attibution: I used AI for the sql components as my sql knowledge is limited.
