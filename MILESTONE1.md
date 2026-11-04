@@ -377,4 +377,4 @@ One shard in the console
 
 ![A Parquet shard in the bucket](images/07-bucket-parquet-shard.png)
 
-Attibution: I used AI for the sql components as my sql knowledge is limited. I also used AI for the code generation (Claude).
+Attribution: I used AI for the sql components as my sql knowledge is limited. I also used AI for the code generation (Claude).All design decisions, analysis and interpretation in this report are my own.

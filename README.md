@@ -29,6 +29,7 @@ Deactivate with `deactivate` when done. `.venv/` is gitignored.
   - [`src/05-splits.py`](src/05-splits.py) — split the feature table by date into train, validate and test
   - [`src/06-shard.py`](src/06-shard.py) — plan one shard per split per month
   - [`src/07-store.py`](src/07-store.py) — export each shard as Parquet to Cloud Storage and check it reads back
+  - [`src/08-eda.py`](src/08-eda.py) — exploratory data analysis on the feature table (distributions, diurnal pattern, station variation, missingness); writes plots to `images/eda/`
   - [`src/logs.py`](src/logs.py) — shared logging helper, imported by the scripts above
 - `datasets/` — downloaded and processed data (gitignored)
 - `images/` — screenshots referenced markdown files.
@@ -39,7 +40,7 @@ Deactivate with `deactivate` when done. `.venv/` is gitignored.
 One per milestone, documenting what each pipeline stage does and how to run it:
 
 - [MILESTONE1.md](MILESTONE1.md) — Data source, task, splits, and storage
-- MILESTONE2.md — Data analysis and data pipeline *(not yet written)*
+- [MILESTONE2.md](MILESTONE2.md) — Data analysis and data pipeline
 - MILESTONE3.md — ML pipeline, MLOps, and first models *(not yet written)*
 - MILESTONE4.md — Scalable inference and continued deployment *(not yet written)*
 
