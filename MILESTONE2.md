@@ -1,6 +1,6 @@
 # Milestone 2 — Data Understanding and Pipeline Setup
 
-Repository: https://github.com/Danny-cert-AI/project (branch `milestone2`)
+Repository: https://github.com/Danny-cert-AI/project.
 
 ## Updates to Milestone 1 based on feedback
 
